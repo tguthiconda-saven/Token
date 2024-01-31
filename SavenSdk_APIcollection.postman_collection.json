@@ -1,0 +1,2638 @@
+{
+	"info": {
+		"_postman_id": "bf25d92b-6712-4eff-b57d-1cd95051861d",
+		"name": "SavenSdk_APIcollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30062806"
+	},
+	"item": [
+		{
+			"name": "card_list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"result\");\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"exception\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/m2p/card/get/list",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"list"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "card_list",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/m2p/card/get/list",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"m2p",
+								"card",
+								"get",
+								"list"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 16 Nov 2023 11:26:29 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "288"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "X-Request-ID",
+							"value": "f105abc8-7955-4336-b191-7791148d9b23"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"result\": {\n        \"cardList\": [\n            \"3561XXXXXXXX1313\",\n            \"3561XXXXXXXX1315\"\n        ],\n        \"kitList\": [\n            \"93440000503\",\n            \"93440000505\"\n        ],\n        \"expiryDateList\": [\n            \"1027\",\n            \"1027\"\n        ],\n        \"cardStatusList\": [\n            \"ALLOCATED\",\n            \"REPLACED\"\n        ],\n        \"cardTypeList\": [\n            \"PHYSICAL\",\n            \"PHYSICAL\"\n        ],\n        \"networkTypeList\": [\n            \"RUPAY\",\n            \"RUPAY\"\n        ]\n    },\n    \"exception\": null,\n    \"pagination\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "card_v3_list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\")\r",
+							"            }\r",
+							"        });\r",
+							"    pm.test(\"Checking the length of the response\", function () {// to check the length of result \r",
+							"    const body = pm.response.json();\r",
+							"    const lengthOfKeys = Object.keys(body['result']).length;\r",
+							"    pm.expect(lengthOfKeys).to.equal(6);\r",
+							"   });\r",
+							"\r",
+							"pm.test(\"Check the keys of the json response\", function () {//ckeck the keys to match the json response\r",
+							"    pm.expect(pm.response.json().result).to.be.an('object');\r",
+							"    pm.expect(pm.response.json().result).to.have.property('cardList');\r",
+							"    pm.expect(pm.response.json().result).to.have.property('kitList');\r",
+							"    pm.expect(pm.response.json().result).to.have.property('expiryDateList');\r",
+							"    pm.expect(pm.response.json().result).to.have.property('cardStatusList');\r",
+							"    pm.expect(pm.response.json().result).to.have.property('cardTypeList');\r",
+							"    pm.expect(pm.response.json().result).to.have.property('networkTypeList');\r",
+							"});\r",
+							"\r",
+							" if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text().trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text();//.trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/list",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card _request_physical_card",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text();//.trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"kitNo\": \"93440000503\",\r\n  \"addressDto\": {\r\n    \"address\": [\r\n      {\r\n        \"title\": \"DELIVERY\",\r\n        \"address1\": \"My Myaddress1\",\r\n        \"address2\": \"My Myaddress2\",\r\n        \"city\": \"Chennai\",\r\n        \"state\": \"TN\",\r\n        \"country\": \"India\",\r\n        \"pinCode\": \"600016\",\r\n        \"fourthLine\": \"xyz\"\r\n      }\r\n    ]\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/request/physical/card",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"request",
+						"physical",
+						"card"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_preference",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"       pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.be.an('object');\r",
+							"\r",
+							"            pm.test(\"Check the keys of the json  response\", function () {//checking the keys if json response matchs \r",
+							"                pm.expect(responseBody.result).to.be.an('object');\r",
+							"                pm.expect(responseBody.result).to.have.property('allowedRuleConfig');\r",
+							"                pm.expect(responseBody.result).to.have.property('disallowedRuleConfig');\r",
+							"                pm.expect(responseBody.result).to.have.property('atm');\r",
+							"                pm.expect(responseBody.result).to.have.property('pos');\r",
+							"                pm.expect(responseBody.result).to.have.property('ecom');\r",
+							"                pm.expect(responseBody.result).to.have.property('international');\r",
+							"                pm.expect(responseBody.result).to.have.property('dcc');\r",
+							"                pm.expect(responseBody.result).to.have.property('contactless');\r",
+							"                pm.expect(responseBody.result).to.have.property('limitConfig');\r",
+							"                pm.expect(responseBody.result).to.have.property('overallLimitConfig');\r",
+							"                pm.expect(responseBody.result).to.have.property('categoryLimitConfig');\r",
+							"                pm.expect(responseBody.result).to.have.property('userConsents');\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text();//.trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/m2p/card/get/preference",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"preference"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_limit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.be.an('object');\r",
+							"            pm.expect(responseBody.result).to.be.an('object');\r",
+							"\r",
+							"            \r",
+							"            pm.test(\"Check the keys of the json response\", function () {//checking if json response keys matchs \r",
+							"                pm.expect(responseBody.result).to.have.property('limitActual');\r",
+							"                pm.expect(responseBody.result).to.have.property('limitAvailable');\r",
+							"                pm.expect(responseBody.result).to.have.property('limitUtilized');\r",
+							"                pm.expect(responseBody.result).to.have.property('cashLimit');\r",
+							"                pm.expect(responseBody.result).to.have.property('creditBalance');\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text().trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text();//.trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/limit",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"limit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_set_limit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text().trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details in console\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text();//.trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"amount\":1000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/set/limit",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"set",
+						"limit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_cvv",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text().trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details in console\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text();//.trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"kitNo\": \"15870000001\",\r\n  \"expiryDate\": \"2810\",\r\n  \"dob\": \"07091989\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/cvv",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"cvv"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_statement",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"       pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        // } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text().trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //     });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text();//.trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"stmt_month\": \"072023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/statement",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"statement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_update_statement",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"stmtDate\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/update/statement",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"update",
+						"statement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_balance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");//to check if status is 200\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.be.an('object');\r",
+							"            pm.expect(responseBody.result).to.be.an('array');\r",
+							"\r",
+							"            \r",
+							"            if (responseBody.result.length > 0) {// check the key match the json response keys\r",
+							"                pm.test(\"Check the keys of the json response\", function () {\r",
+							"                    const resultItem = responseBody.result[0];\r",
+							"                    pm.expect(resultItem).to.be.an('object');\r",
+							"                    pm.expect(resultItem).to.have.property('entityId');\r",
+							"                    pm.expect(resultItem).to.have.property('productId');\r",
+							"                    pm.expect(resultItem).to.have.property('balance');\r",
+							"                    pm.expect(resultItem).to.have.property('lienBalance');\r",
+							"                });\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/m2p/card/get/balance",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_Set_Pin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"pin\":\"JtJqooZOO4AtJsYewMHr+CeRxOcQr59+7A/1AgWTFiQ=\",\r\n  \"kitNo\": \"9344000050562475\",\r\n  \"expiryDate\": \"2710\",\r\n  \"dob\": \"07091989\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/set/pin",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"set",
+						"pin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_set_preference",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"limitConfig\": {\r\n    \"txnType\": \"ATM\",\r\n    \"dailyLimitValue\": \"2500\",\r\n    \"dailyLimitCnt\": \"3\",\r\n    \"minAmount\": \"500\",\r\n    \"maxAmount\": \"20000\"\r\n  },\r\n  \"international\": true,\r\n  \"contactless\": true,\r\n  \"atm\": true,\r\n  \"pos\": true,\r\n  \"ecom\": true\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/set/preference",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"set",
+						"preference"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_upgrade_limit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\":5000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/upgrade/limit",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"upgrade",
+						"limit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_repayment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"       pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success - No exception and expected status code\", function () {\r",
+							"                    console.log(\"Success - No exception and expected status code\");\r",
+							"\r",
+							"                    // Empty test to display the success message directly\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details in console\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body\");\r",
+							"                        pm.expect.fail(\"Failed\");\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect.fail(\"Failed\");\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"businessEntityId\": \"SBRAZORPAY\",\r\n  \"business\": \"SBRAZORPAY\",\r\n  \"amount\": 19890.00,\r\n  \"transactionType\": \"DIRECT_CREDIT\",\r\n  \"transactionOrigin\": \"MOBILE\",\r\n  \"productId\": \"GENERAL\",\r\n  \"externalTransactionId\": \"entityid_Repayment_200721\",\r\n  \"description\": \"Repayment\",\r\n  \"otherPartyId\": \"Repayment\",\r\n  \"otherPartyName\": \"Repayment\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/repayment",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"repayment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_transactions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"       pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"fromDate\": \"2023-10-11\",\r\n  \"toDate\": \"2023-10-11\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/transactions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_transactions_status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"             if (actualStatus === 200){\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"             }\r",
+							"        });\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"fromDate\": \"2023-11-25\",\r\n  \"toDate\": \"2026-12-25\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/transaction/status",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"transaction",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_unbilled_transactions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"        pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"        } else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"            pm.test(\"HTML error message\", function () {\r",
+							"                const $ = cheerio.load(responseText);\r",
+							"                const errorMessage = $(\"h1\").text();//.trim();\r",
+							"                console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"\r",
+							"                pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            });\r",
+							"        } else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);//cherrio is to exract and log the html error \r",
+							"            const errorMessage = $(\"h1\").text().trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"pageNumber\": 1,\r\n  \"pageSize\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/m2p/card/get/unbilled/transactions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"unbilled",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_get_due",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function processResponse() {\r",
+							"    const responseText = pm.response.text();\r",
+							"\r",
+							"    try {\r",
+							"        const responseBody = JSON.parse(responseText);\r",
+							"        const actualStatus = (responseBody && responseBody.status) || pm.response.code;\r",
+							"\r",
+							"       pm.test(\"Status code validation\", function () {\r",
+							"            if (actualStatus === 200) {\r",
+							"            pm.response.to.have.status(actualStatus);\r",
+							"            console.log(actualStatus,\"success\");\r",
+							"            }\r",
+							"        });\r",
+							"        pm.test(\"JSON Response Validation\", function () {\r",
+							"            pm.expect(responseBody).to.eql({\r",
+							"                result: true,\r",
+							"                exception: null,\r",
+							"                pagination: null\r",
+							"            });\r",
+							"        });\r",
+							"\r",
+							"        if (actualStatus === 200) {//to check if status is 200 and got exception \r",
+							"            if (!responseBody.exception) {\r",
+							"                pm.test(\"Success there is no exception \", function () {\r",
+							"                    console.log(\"Success there is no exception\");\r",
+							"                });\r",
+							"            } else {\r",
+							"                pm.test(\"Exception details validation\", function () {\r",
+							"                    console.log(\"Exception details:\", responseBody.exception);\r",
+							"                    pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                });\r",
+							"            }\r",
+							"         } //else if ([504].includes(actualStatus)) {// this block checkes the http status code that indiactes server errors \r",
+							"        //     pm.test(\"HTML error message\", function () {\r",
+							"        //         const $ = cheerio.load(responseText);\r",
+							"        //         const errorMessage = $(\"h1\").text().trim();\r",
+							"        //         console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        //         pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            //});\r",
+							"        //} \r",
+							"        else {\r",
+							"            console.log(\"Error\");\r",
+							"\r",
+							"            pm.test(\"Status code is \" + actualStatus, function () {\r",
+							"                pm.response.to.have.status(actualStatus);\r",
+							"            });\r",
+							"\r",
+							"            pm.test(\"Error details validation\", function () {\r",
+							"                if (actualStatus === 500) {\r",
+							"                    if (responseBody && responseBody.message && responseBody.error) {\r",
+							"                        console.log(\"Response value is:\" + responseBody.message);\r",
+							"                        console.log(\"Error details:\" + responseBody.error);\r",
+							"                        pm.expect.fail(`Failed - Error details present: ${JSON.stringify(responseBody.error)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is no error issue in the response body with 500 status\");\r",
+							"                        pm.expect(true, \"There is no error issue in the response body with 500 status\").to.be.true;\r",
+							"                    }\r",
+							"                } else if (actualStatus === 422) {\r",
+							"                    if (responseBody && responseBody.error && responseBody.error.details) {\r",
+							"                        const validationError = responseBody.error.details[0];\r",
+							"                        console.log(\"Error message:\", validationError.message);\r",
+							"                        console.log(\"Path:\", validationError.path);\r",
+							"                        pm.expect.fail(`Failed - Validation error details present: ${JSON.stringify(validationError)}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"There is error details for 422 status code\");\r",
+							"                        pm.expect(true, \"There is error details for 422 status code\").to.be.true;\r",
+							"                    }\r",
+							"                } else {\r",
+							"                    if (responseBody && responseBody.exception) {\r",
+							"                        console.log(\"Exception details:\", responseBody.exception);\r",
+							"                        pm.expect.fail(`Failed - Exception details present: ${JSON.stringify(responseBody.exception)}`);\r",
+							"                    } else if (actualStatus === 400 && responseBody.error && responseBody.error.message) {\r",
+							"                        console.log(\"Error message:\", responseBody.error.message);\r",
+							"                        console.log(\"Name:\", responseBody.error.name);\r",
+							"                        pm.expect.fail(`Failed - ${responseBody.error.message}`);\r",
+							"                    } else {\r",
+							"                        console.log(\"No exception details for 400 status\");\r",
+							"                        pm.expect(true, \"No exception details for 400 status\").to.be.true;\r",
+							"                    }\r",
+							"                }\r",
+							"            });\r",
+							"        }\r",
+							"    } catch (jsonError) {//catch the json phasing error(if response is not in json) \r",
+							"        pm.test(\"HTML error message\", function () {\r",
+							"            const $ = cheerio.load(responseText);\r",
+							"            const errorMessage = $(\"h1\").text();//.trim();\r",
+							"            console.log(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"            pm.expect.fail(`Failed - HTML Error Message: ${errorMessage}`);\r",
+							"        });\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"processResponse();\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/m2p/card/get/due",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"m2p",
+						"card",
+						"get",
+						"due"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "card_mpin_verify",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// let {token, isSuccessful} = pm.response.json();\r",
+							"// pm.collectionVariables.set(\"Token\", token);\r",
+							"// console.log(\"Token*\",token)\r",
+							"let responseJson = pm.response.json();\r",
+							"pm.environment.set(\"Token\", String(responseJson.token));\r",
+							"console.log(\"Token changed in environment:\", responseJson.token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"phoneNumber\": \"+919700000000\",\r\n  \"pin\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/app/user/mpin/verify",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"app",
+						"user",
+						"mpin",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "https://cmsdevapi.saven.in",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
